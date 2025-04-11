@@ -10,9 +10,9 @@ def extraer_datos_desde_pdf(file) -> dict:
 
     proveedor = extraer_proveedor(texto_completo)
     fecha = extraer_fecha(texto_completo)
-    base = extraer_valor(texto_completo, r"Base imponible.*?([\d,.]+)")
-    iva = extraer_valor(texto_completo, r"IVA.*?([\d,.]+)")
-    total = extraer_valor(texto_completo, r"Total.*?([\d,.]+)")
+    base = extraer_valor(texto_completo, r"Base imponible.*?([\d.,]+)")
+    iva = extraer_valor(texto_completo, r"IVA.*?([\d.,]+)")
+    total = extraer_valor(texto_completo, r"Total.*?([\d.,]+)")
 
     return {
         "proveedor": proveedor or "Desconocido",
@@ -36,5 +36,11 @@ def extraer_fecha(texto: str):
 def extraer_valor(texto: str, patron: str):
     match = re.search(patron, texto, re.IGNORECASE)
     if match:
-        return float(match.group(1).replace(",", "."))
+        valor_str = match.group(1)
+        # Quitar puntos de miles y dejar solo la coma decimal
+        valor_str = valor_str.replace(".", "").replace(",", ".")
+        try:
+            return float(valor_str)
+        except ValueError:
+            pass
     return 0.0
