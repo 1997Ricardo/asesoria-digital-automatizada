@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: asesoria-digital
+    env: python
+    plan: free
+    buildCommand: ""
+    startCommand: ./start.sh
+    envVars:
+      - key: EMAIL_USER
+        value: ricardosunarodriguez@gmail.com
+      - key: EMAIL_PASS
+        value: cdxkgezgewfeudrx
+      - key: EMAIL_DEST
+        value: ritoro97@gmail.com
