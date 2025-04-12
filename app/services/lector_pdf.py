@@ -14,6 +14,16 @@ def extraer_datos_desde_pdf(file) -> dict:
     iva = extraer_valor(texto_completo, r"IVA.*?([\d.,]+)")
     total = extraer_valor(texto_completo, r"Total.*?([\d.,]+)")
 
+    tipo = "ingreso" if "cliente" in texto_completo.lower() or proveedor.lower().startswith("ricardo") else "gasto"
+
+    return {
+        "proveedor": proveedor or "Desconocido",
+        "fecha": fecha,
+        "base_imponible": base,
+        "iva": iva,
+        "total": total,
+        "tipo": tipo
+    }
     return {
         "proveedor": proveedor or "Desconocido",
         "fecha": fecha,

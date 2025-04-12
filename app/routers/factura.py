@@ -22,3 +22,21 @@ async def subir_factura(file: UploadFile = File(...), db: Session = Depends(get_
     db.commit()
     db.refresh(nueva_factura)
     return {"mensaje": "Factura guardada con datos reales", "datos": datos}
+from typing import List
+from app.models.factura import Factura
+from sqlalchemy.orm import Session
+
+@router.get("/", response_model=List[dict])
+def listar_facturas(db: Session = Depends(get_db)):
+    facturas = db.query(Factura).all()
+    return [
+        {
+            "id": f.id,
+            "proveedor": f.proveedor,
+            "fecha": f.fecha,
+            "base_imponible": f.base_imponible,
+            "iva": f.iva,
+            "total": f.total,
+            "tipo": f.tipo
+        } for f in facturas
+    ]

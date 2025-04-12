@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Financiero</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>Dashboard Financiero</h1>
+  <canvas id="grafico" width="800" height="400"></canvas>
+
+  <script>
+    async function cargarDatos() {
+      const response = await fetch("/facturas");
+      const facturas = await response.json();
+
+      // Agrupar por mes y tipo
+      const resumen = {};
+
+      facturas.forEach(f => {
+        const mes = new Date(f.fecha).toLocaleString("default", { month: "short", year: "numeric" });
+        if (!resumen[mes]) resumen[mes] = { ingresos: 0, gastos: 0 };
+        resumen[mes][f.tipo === "ingreso" ? "ingresos" : "gastos"] += f.total;
+      });
+
+      const labels = Object.keys(resumen);
+      const ingresos = labels.map(mes => resumen[mes].ingresos);
+      const gastos = labels.map(mes => resumen[mes].gastos);
+
+      // Crear gráfica
+      const ctx = document.getElementById("grafico").getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            { label: "Ingresos", data: ingresos },
+            { label: "Gastos", data: gastos }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    cargarDatos();
+  </script>
+</body>
+</html>
